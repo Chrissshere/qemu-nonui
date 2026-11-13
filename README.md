@@ -2,7 +2,7 @@
 
 Boots iPhone 5s factory NonUI build 11A24580o on an Apple Silicon Mac, in QEMU.
 
-You bring the two original files. The app download does not contain Apple firmware. Use images you are allowed to have. This is one NonUI build, not a general iOS emulator. Drawing is done in software. On the machine I tried, SwitchBoard sat around 3 to 6 fps.
+You bring the two original files, because the app download does not contain Apple firmware. On the machine I tried, SwitchBoard sat around 3 to 6 fps. (with some jumps to 12 fps) The emulator is tested to work only with that build. Use at your own risk, though no risk of device harm.
 
 ## Which builds work
 
