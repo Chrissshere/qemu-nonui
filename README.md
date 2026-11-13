@@ -65,7 +65,7 @@ On Apple Silicon, with Xcode's command line tools selected:
 
 That downloads QEMU from the UTM 4.7.5 release and packs the libraries the boot uses. You do not install UTM.
 
-`dist/` gets the app, the zip, and `SHA256SUMS`. The signature is ad hoc. Other people's code is listed in [THIRD-PARTY.md](THIRD-PARTY.md).
+`dist/` gets the app, the zip, and `SHA256SUMS`. The signature is ad hoc. Other people's code is listed in [THIRD-PARTY.md](THIRD-PARTY.md). The license for my code is [LICENSE](LICENSE).
 
 ## What the boot is doing
 
