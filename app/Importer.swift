@@ -105,6 +105,7 @@ final class Importer: NSObject, NSApplicationDelegate {
   }
 
   func applicationDidFinishLaunching(_ notification: Notification) {
+    AppIcon.start()
     window.title = "NonUI"
     window.contentMinSize = NSSize(width: 510, height: 502)
     window.center()

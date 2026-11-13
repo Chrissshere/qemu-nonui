@@ -29,6 +29,7 @@ final class Display: NSObject, NSApplicationDelegate {
   }
 
   func applicationDidFinishLaunching(_ notification: Notification) {
+    AppIcon.start()
     window.title = "11A24580o"
     window.minSize = NSSize(width: 380, height: 450)
     window.center()

@@ -40,7 +40,14 @@ trap 'rm -rf "$stage"' EXIT
 bundle="$stage/NonUI.app/Contents"
 resources="$bundle/Resources"
 display="$bundle/Helpers/NonUI Display.app/Contents"
-mkdir -p "$bundle/MacOS" "$display/MacOS" "$resources/runtime" "$resources/licenses"
+mkdir -p "$bundle/MacOS" "$display/MacOS" "$display/Resources" "$resources/runtime" "$resources/licenses"
+icon_stage="$build/icons"
+rm -rf "$icon_stage"
+xcrun swift "$root/app/make-icon.swift" "$root/app/icon-source.png" "$icon_stage"
+iconutil -c icns "$icon_stage/icon.iconset" -o "$icon_stage/AppIcon.icns"
+for dest in "$resources" "$display/Resources"; do
+    cp "$icon_stage/AppIcon.icns" "$icon_stage/AppIconLight.png" "$icon_stage/AppIconDark.png" "$dest/"
+done
 cp app/Info.plist "$bundle/Info.plist"
 cp app/Display-Info.plist "$display/Info.plist"
 cp app/nonui host-ready "$storage_bin/RootBuilder" "$resources/"
@@ -67,9 +74,9 @@ done
 cp "$build/storage/checkouts/Unrar.swift/Sources/Cunrar/license.txt" "$resources/licenses/UnRAR.txt"
 
 xcrun swiftc -O -parse-as-library -target arm64-apple-macos15.0 \
-    app/Importer.swift app/Logs.swift -o "$bundle/MacOS/NonUI"
+    app/AppIcon.swift app/Importer.swift app/Logs.swift -o "$bundle/MacOS/NonUI"
 xcrun swiftc -O -parse-as-library -target arm64-apple-macos15.0 \
-    app/GuestPixels.swift app/Display.swift -o "$display/MacOS/NonUIDisplay"
+    app/AppIcon.swift app/GuestPixels.swift app/Display.swift -o "$display/MacOS/NonUIDisplay"
 xcrun clang -Wall -Wextra -Werror -O2 -arch arm64 -mmacosx-version-min=15.0 \
     native/runner.c -o "$resources/runner"
 /usr/bin/codesign --force --sign - --entitlements native/entitlements.plist "$resources/runner"
