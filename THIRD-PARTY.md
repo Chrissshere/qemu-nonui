@@ -1,6 +1,7 @@
 # Third-party software
 
-The HFSX reader and writer are from Light Touch's FirmwareKit at commit
+Thanks to Light Touch. The disk builder logic was inspired by it. The HFSX
+reader and writer NonUI calls are their FirmwareKit at commit
 `5078f0a8f1aa86f512ca97a23aa4b3443a190845`. Its Swift dependencies are pinned in
 `storage/Package.resolved`. The app build copies their notices into the bundle.
 [Light Touch source](https://github.com/samhenrigold/LightTouchMac/tree/5078f0a8f1aa86f512ca97a23aa4b3443a190845)

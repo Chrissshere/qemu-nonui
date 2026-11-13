@@ -69,4 +69,4 @@ That downloads QEMU from the UTM 4.7.5 release and packs the libraries the boot 
 
 ## What the boot is doing
 
-NonUI maps the guest kernel and a device tree for the emulated iPhone 5s. The disk builder copies the DMG into an HFSX RAM disk and merges the var tar into `/private/var`. A small C program in front of QEMU handles the timer, the RAM disk copies, and the device registers the kernel wants before userland. The window shows the guest's Core Graphics bitmap. Clicks and Home go through the guest's own handlers.
+NonUI maps the guest kernel and a device tree for the emulated iPhone 5s. The disk builder copies the DMG into an HFSX RAM disk and merges the var tar into `/private/var`. That disk builder logic was inspired by [Light Touch](https://github.com/samhenrigold/LightTouchMac/tree/5078f0a8f1aa86f512ca97a23aa4b3443a190845). Thanks for that. The HFS read and write calls are their FirmwareKit. A small C program in front of QEMU handles the timer, the RAM disk copies, and the device registers the kernel wants before userland. The window shows the guest's Core Graphics bitmap. Clicks and Home go through the guest's own handlers.
