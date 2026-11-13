@@ -2,7 +2,7 @@
 
 Boots iPhone 5s factory NonUI build 11A24580o on an Apple Silicon Mac, in QEMU.
 
-You bring the two original files. I didn't obtain that firmware, I don't host it, and I didn't give it to you. If you got it from somewhere, that was you, and it is not my fault. I put this up for educational purposes, so you can see how this one NonUI build boots. On the machine I tried, SwitchBoard sat around 3 to 6 fps. (with some jumps to 12 fps) The emulator is tested to work only with that build. Use at your own risk, though no risk of device harm.
+You bring the two original files. I don't host it, and I didn't give it to you. If you got it from somewhere, that was you, and it is not my responsibility. I put this up for educational purposes, so you can see how this one NonUI build boots. On the machine I tried, SwitchBoard sat around 3 to 6 fps. (with some jumps to 12 fps) The emulator is tested to work only with that build. Use at your own risk, though no risk of device harm.
 
 ## Which builds work
 
