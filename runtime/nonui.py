@@ -22,7 +22,6 @@ from prepare import prepare, report, verify_profile
 RUNTIME = Path(__file__).resolve().parent
 RESOURCES = RUNTIME.parent
 SUPPORT = Path.home() / "Library/Application Support/NonUI"
-DEFAULT_UTM = Path("/Applications/UTM.app")
 
 
 def read_json(path):
@@ -237,7 +236,6 @@ def main():
     importer.add_argument("--experimental", action="store_true")
     importer.add_argument("files", type=Path, nargs="+")
     boot = commands.add_parser("boot")
-    boot.add_argument("--utm", type=Path, default=DEFAULT_UTM)
     boot.add_argument(
         "--seconds", type=int, choices=range(120, 881), metavar="120-880", default=880
     )
@@ -276,9 +274,7 @@ def main():
                 if not profile.is_dir():
                     raise ValueError(f"Import {BUILD} before booting.")
                 verify_profile(profile)
-                engine = prepare_engine(
-                    arguments.utm.expanduser().resolve(), directory / "Frameworks"
-                )
+                engine = prepare_engine(RESOURCES / "Frameworks")
                 return launch(
                     directory,
                     profile,

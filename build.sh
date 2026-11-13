@@ -3,11 +3,13 @@ set -euo pipefail
 cd "$(dirname "$0")"
 root="$PWD"
 build="$root/.build"
-version=0.1.0
+version=0.1.1
 upstream="$build/LightTouchMac"
 revision=5078f0a8f1aa86f512ca97a23aa4b3443a190845
 python_sha=7a2384641584ab9984221fcb0fc9265df465922af71be71410529e2a9c3f0540
 python_url=https://github.com/astral-sh/python-build-standalone/releases/download/20261110/cpython-3.13.18%2B20261110-aarch64-apple-darwin-install_only_stripped.tar.gz
+utm_sha=a8435c93cfb5f8bbfeea4b134cfad1ac66b67632b75e438c63b1a8ae043bef0e
+utm_url=https://github.com/utmapp/UTM/releases/download/v4.7.5/UTM.dmg
 
 if [[ "$(uname -m)" != arm64 ]]; then
     echo "Build NonUI on an Apple Silicon Mac." >&2
@@ -32,11 +34,22 @@ if [[ ! -f "$python_archive" ]]; then
 fi
 printf '%s  %s\n' "$python_sha" "$python_archive" | /usr/bin/shasum -a 256 -c -
 
+utm_archive="$build/downloads/UTM.dmg"
+if [[ ! -f "$utm_archive" ]]; then
+    /usr/bin/curl -fLsS --retry 2 -o "$utm_archive.tmp" "$utm_url"
+    mv "$utm_archive.tmp" "$utm_archive"
+fi
+printf '%s  %s\n' "$utm_sha" "$utm_archive" | /usr/bin/shasum -a 256 -c -
+
 swift build --package-path storage --scratch-path "$build/storage" -c release \
     --disable-automatic-resolution --product RootBuilder
 storage_bin="$(swift build --package-path storage --scratch-path "$build/storage" -c release --show-bin-path)"
 stage="$(mktemp -d "$build/package.XXXXXX")"
-trap 'rm -rf "$stage"' EXIT
+utm_mount="$build/utm-mount"
+hdiutil detach "$utm_mount" >/dev/null 2>&1 || true
+rm -rf "$utm_mount"
+mkdir -p "$utm_mount"
+trap 'hdiutil detach "$utm_mount" >/dev/null 2>&1 || true; rm -rf "$stage"' EXIT
 bundle="$stage/NonUI.app/Contents"
 resources="$bundle/Resources"
 display="$bundle/Helpers/NonUI Display.app/Contents"
@@ -63,6 +76,10 @@ if /usr/bin/otool -L "$resources/RootBuilder" | /usr/bin/grep -q '@rpath/libswif
 fi
 cp LICENSE THIRD-PARTY.md "$resources/licenses/"
 /usr/bin/tar -xzf "$python_archive" -C "$resources"
+hdiutil attach -nobrowse -readonly -mountpoint "$utm_mount" "$utm_archive" >/dev/null
+PYTHONPATH="$root/runtime" "$resources/python/bin/python3.13" -c 'import sys; from pathlib import Path; from engine import install_engine; install_engine(Path(sys.argv[1]), Path(sys.argv[2]))' \
+    "$utm_mount/UTM.app/Contents/Frameworks" "$resources/Frameworks"
+hdiutil detach "$utm_mount" >/dev/null
 
 for dependency in "$build/storage/checkouts/"*; do
     name="$(basename "$dependency")"
@@ -80,6 +97,9 @@ xcrun swiftc -O -parse-as-library -target arm64-apple-macos15.0 \
 xcrun clang -Wall -Wextra -Werror -O2 -arch arm64 -mmacosx-version-min=15.0 \
     native/runner.c -o "$resources/runner"
 /usr/bin/codesign --force --sign - --entitlements native/entitlements.plist "$resources/runner"
+for framework in "$resources/Frameworks/"*.framework; do
+    /usr/bin/codesign --force --sign - "$framework"
+done
 /usr/bin/codesign --force --sign - "${display%/Contents}"
 /usr/bin/codesign --force --sign - "$stage/NonUI.app"
 /usr/bin/codesign --verify --strict --verbose=1 "$stage/NonUI.app"

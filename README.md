@@ -16,25 +16,23 @@ The var tar is only `/private/var`. The DMG is the OS. You need both.
 
 ## What to install
 
-Release 0.1.0 has `NonUI-0.1.0-macos-arm64.dmg`. Open it and drag NonUI into Applications.
+Release 0.1.1 has `NonUI-0.1.1-macos-arm64.dmg`. Open it and drag NonUI into Applications. QEMU is already in the app.
 
 - An Apple Silicon Mac on macOS 15
-- [UTM 4.7.5, build 118](https://github.com/utmapp/UTM/releases/tag/v4.7.5) in `/Applications`. NonUI checks that QEMU binary.
 - `N51AP_11A24580o_rootfs.dmg`
 - `N51AP_11A24580o_var.tar`
 - About 50 GB free on the disk that holds the NonUI data. If the host check prints `WAIT`, the load is at or above the core count, or free space is under 50 GB.
 
 ## Boot
 
-1. Install UTM 4.7.5 build 118.
-2. Open NonUI.
-3. Click Choose DMG and pick `N51AP_11A24580o_rootfs.dmg`.
-4. Click Choose var tar and pick `N51AP_11A24580o_var.tar`. If both files are already inside one tar or zip, use Choose Archive. You can also drop the files on the window.
-5. Click Prepare. NonUI builds a disk in `~/Library/Application Support/NonUI` and leaves the originals where they are. Later boots reuse that disk. Guest writes stay in RAM for that session.
+1. Open NonUI.
+2. Click Choose DMG and pick `N51AP_11A24580o_rootfs.dmg`.
+3. Click Choose var tar and pick `N51AP_11A24580o_var.tar`. If both files are already inside one tar or zip, use Choose Archive. You can also drop the files on the window.
+4. Click Prepare. NonUI builds a disk in `~/Library/Application Support/NonUI` and leaves the originals where they are. Later boots reuse that disk. Guest writes stay in RAM for that session.
    While it prepares, it reads the N51 device tree from Apple's iOS 7.0.1 restore. Offline, click Use Local IPSW and pick `iPhone6,1_7.0.1_11A470a_Restore.ipsw`.
-6. Click Boot. The display opens when SwitchBoard draws. That took about a minute here.
-7. Click an icon. In QRCode, click Home, then Quit on the guest panel, and you should land back on SwitchBoard.
-8. Click Stop, or close the display window, when you want QEMU to quit.
+5. Click Boot. The display opens when SwitchBoard draws. That took about a minute here.
+6. Click an icon. In QRCode, click Home, then Quit on the guest panel, and you should land back on SwitchBoard.
+7. Click Stop, or close the display window, when you want QEMU to quit.
 
 The log sits on the main window. The menu above it switches between the session, the guest console, and QEMU. Open in Window is the same log in its own window.
 
@@ -55,7 +53,7 @@ With it on, you can hand NonUI another root DMG, another tar, or a tar or zip th
 ./nonui reset
 ```
 
-`./nonui import --experimental` is the same switch as Settings. Run `stop` from another terminal. `./nonui --data-dir /path/to/folder` keeps a separate copy. `boot --utm /path/to/UTM.app` if UTM is not in Applications.
+`./nonui import --experimental` is the same switch as Settings. Run `stop` from another terminal. `./nonui --data-dir /path/to/folder` keeps a separate copy.
 
 ## Build the app
 
@@ -65,8 +63,10 @@ On Apple Silicon, with Xcode's command line tools selected:
 ./build.sh
 ```
 
+That downloads QEMU from the UTM 4.7.5 release and packs the libraries the boot uses. You do not install UTM.
+
 `dist/` gets the app, the zip, and `SHA256SUMS`. The signature is ad hoc. Other people's code is listed in [THIRD-PARTY.md](THIRD-PARTY.md).
 
 ## What the boot is doing
 
-NonUI maps the guest kernel and a device tree for the emulated iPhone 5s. The disk builder copies the DMG into an HFSX RAM disk and merges the var tar into `/private/var`. A small C program in front of UTM's QEMU handles the timer, the RAM disk copies, and the device registers the kernel wants before userland. The window shows the guest's Core Graphics bitmap. Clicks and Home go through the guest's own handlers.
+NonUI maps the guest kernel and a device tree for the emulated iPhone 5s. The disk builder copies the DMG into an HFSX RAM disk and merges the var tar into `/private/var`. A small C program in front of QEMU handles the timer, the RAM disk copies, and the device registers the kernel wants before userland. The window shows the guest's Core Graphics bitmap. Clicks and Home go through the guest's own handlers.

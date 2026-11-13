@@ -10,9 +10,10 @@ ships with the standard library in the bundle.
 [CPython license](https://github.com/python/cpython/blob/v3.13.18/LICENSE),
 [Python Build Standalone distribution](https://github.com/astral-sh/python-build-standalone/releases/tag/20261110)
 
-NonUI uses the QEMU 10.0.2 framework from UTM 4.7.5 build 118. It copies the
-framework from the installed UTM and adjusts the TCG debugger cache flush in that
-copy. [UTM release](https://github.com/utmapp/UTM/releases/tag/v4.7.5),
+The app includes QEMU 10.0.2 from UTM 4.7.5 build 118, and the libraries that
+binary links. `./build.sh` downloads that release and changes one TCG debugger
+cache-flush instruction. You do not install UTM.
+[UTM release](https://github.com/utmapp/UTM/releases/tag/v4.7.5),
 [QEMU source](https://github.com/utmapp/qemu/tree/v10.0.2-utm)
 
 The guest image is assembled from the user's original files. The retail N51

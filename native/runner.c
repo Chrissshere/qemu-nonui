@@ -46,7 +46,7 @@ int main(int argc, char **argv, char **envp) {
     void (*main_loop)(void) = dlsym(handle, "qemu_main_loop");
     void (*cleanup)(void) = dlsym(handle, "qemu_cleanup");
     if (!initialize || !main_loop || !cleanup) {
-        fputs("UTM QEMU API is incomplete\n", stderr);
+        fputs("QEMU API is incomplete\n", stderr);
         return 70;
     }
 
