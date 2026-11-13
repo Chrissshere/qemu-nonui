@@ -1,0 +1,18 @@
+#!/bin/bash
+set -euo pipefail
+
+state_dir=${1:?}
+cores="$(/usr/sbin/sysctl -n hw.ncpu)"
+load="$(/usr/sbin/sysctl -n vm.loadavg | /usr/bin/awk '{print $2}')"
+if /usr/bin/awk -v load="$load" -v cores="$cores" 'BEGIN { exit !(load >= cores) }'; then
+    echo "WAIT load $load/$cores"
+    exit 1
+fi
+
+free_gb="$(/bin/df -Pk "$state_dir" | /usr/bin/awk 'NR == 2 { print int($4 / 1048576) }')"
+if (( free_gb < 50 )); then
+    echo "WAIT ${free_gb} GB free (50 GB required)"
+    exit 1
+fi
+
+echo "READY load $load/$cores, ${free_gb} GB free"

@@ -1,0 +1,4 @@
+#!/bin/bash
+set -euo pipefail
+here="$(cd "$(dirname "$0")" && pwd)"
+exec "$here/python/bin/python3.13" -sEBu "$here/runtime/nonui.py" "$@"
